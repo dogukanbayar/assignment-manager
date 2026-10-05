@@ -8,11 +8,14 @@ export default defineConfig({
   build: {
     rolldownOptions: {
       output: {
-        advancedChunks: {
+        codeSplitting: {
           groups: [
             { name: 'mui', test: /node_modules[\\/](@mui|@emotion)[\\/]/ },
             { name: 'react', test: /node_modules[\\/](react|react-dom|scheduler)[\\/]/ },
-            { name: 'state', test: /node_modules[\\/](@reduxjs|react-redux|redux|immer|reselect|react-hook-form|zod|@hookform)[\\/]/ },
+            {
+              name: 'state',
+              test: /node_modules[\\/](@reduxjs|react-redux|redux|immer|reselect|react-hook-form|zod|@hookform)[\\/]/,
+            },
           ],
         },
       },
