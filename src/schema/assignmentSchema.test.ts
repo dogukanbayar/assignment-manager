@@ -8,9 +8,12 @@ const t = (key: keyof typeof translations.en, params?: Record<string, string | n
   for (const [k, v] of Object.entries(params ?? {})) text = text.replace(`{${k}}`, String(v));
   return text;
 };
-const existing: Assignment[] = [{ id: '1', code: 'AB123', name: 'x', assignDate: '2025-01-01', isUpdatable: true }];
+const existing: Assignment[] = [
+  { id: '1', code: 'AB123', name: 'x', assignDate: '2025-01-01', isUpdatable: true },
+];
 const valid = { code: 'CD456', name: 'Ahmet', assignDate: '14/03/2025', isUpdatable: false };
-const schema = (selectedId: string | null = null) => createAssignmentSchema({ t, items: existing, selectedId });
+const schema = (selectedId: string | null = null) =>
+  createAssignmentSchema({ t, items: existing, selectedId });
 
 describe('assignment schema', () => {
   it('accepts valid values', () => {

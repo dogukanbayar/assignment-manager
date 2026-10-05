@@ -80,6 +80,12 @@ export const seedDemoData = () => {
   write([
     { id: crypto.randomUUID(), code: 'AB123', name: 'Ahmet', assignDate: '2025-03-14', isUpdatable: true },
     { id: crypto.randomUUID(), code: 'CD456', name: 'Zeynep', assignDate: '2025-07-02', isUpdatable: false },
-    { id: crypto.randomUUID(), code: 'EF789', name: 'Mehmet Ali', assignDate: '2025-11-21', isUpdatable: true },
+    {
+      id: crypto.randomUUID(),
+      code: 'EF789',
+      name: 'Mehmet Ali',
+      assignDate: '2025-11-21',
+      isUpdatable: true,
+    },
   ]);
 };

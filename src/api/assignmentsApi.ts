@@ -27,7 +27,13 @@ export const assignmentsApi = createApi({
       async onQueryStarted(_arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          dispatch(assignmentsApi.util.updateQueryData('getAssignments', undefined, (draft) => void draft.push(data)));
+          dispatch(
+            assignmentsApi.util.updateQueryData(
+              'getAssignments',
+              undefined,
+              (draft) => void draft.push(data),
+            ),
+          );
         } catch {
           /* hata çağıran tarafta yönetilir */
         }

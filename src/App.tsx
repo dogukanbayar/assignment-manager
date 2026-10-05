@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { Alert, Box, Button, Container, Paper, Snackbar, Typography } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import { AppHeader } from './components/AppHeader';
@@ -9,7 +10,8 @@ import { useI18n } from './i18n/I18nProvider';
 
 export default function App() {
   const { t } = useI18n();
-  const ws = useAssignmentWorkspace();
+  const formPanelRef = useRef<HTMLDivElement>(null);
+  const ws = useAssignmentWorkspace(formPanelRef);
   const { notification } = ws;
 
   return (
@@ -19,7 +21,7 @@ export default function App() {
 
         <Grid container spacing={3} alignItems="flex-start">
           <Grid size={{ xs: 12, md: 5 }}>
-            <Paper ref={ws.formPanelRef} variant="outlined" sx={{ p: 3, scrollMarginTop: 16 }}>
+            <Paper ref={formPanelRef} variant="outlined" sx={{ p: 3, scrollMarginTop: 16 }}>
               <Typography variant="h6" component="h2" fontWeight={600} sx={{ mb: 2 }}>
                 {ws.isEditMode ? t('editRecord') : t('newRecord')}
               </Typography>

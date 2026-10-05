@@ -1,7 +1,26 @@
 import { useMemo, useState, type KeyboardEvent } from 'react';
 import {
-  Alert, Box, Button, Chip, FormControlLabel, InputAdornment, Paper, Skeleton, Stack, Switch, Table, TableBody,
-  TableCell, TableContainer, TableHead, TablePagination, TableRow, TableSortLabel, TextField, Tooltip, Typography,
+  Alert,
+  Box,
+  Button,
+  Chip,
+  FormControlLabel,
+  InputAdornment,
+  Paper,
+  Skeleton,
+  Stack,
+  Switch,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
+  TableSortLabel,
+  TextField,
+  Tooltip,
+  Typography,
 } from '@mui/material';
 import { keyframes } from '@mui/material/styles';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -37,7 +56,15 @@ interface Props {
   onSelect: (row: Assignment) => void;
 }
 
-export function AssignmentGrid({ items, selectedId, highlightedId, isLoading, isError, onRetry, onSelect }: Props) {
+export function AssignmentGrid({
+  items,
+  selectedId,
+  highlightedId,
+  isLoading,
+  isError,
+  onRetry,
+  onSelect,
+}: Props) {
   const { t } = useI18n();
   const [query, setQuery] = useState('');
   const [onlyUpdatable, setOnlyUpdatable] = useState(false);
@@ -58,7 +85,11 @@ export function AssignmentGrid({ items, selectedId, highlightedId, isLoading, is
       rows = [...rows].sort((a, b) => {
         const av = a[orderBy];
         const bv = b[orderBy];
-        return (typeof av === 'boolean' ? Number(av) - Number(bv as boolean) : String(av).localeCompare(String(bv))) * dir;
+        return (
+          (typeof av === 'boolean'
+            ? Number(av) - Number(bv as boolean)
+            : String(av).localeCompare(String(bv))) * dir
+        );
       });
     }
     return rows;
@@ -82,7 +113,12 @@ export function AssignmentGrid({ items, selectedId, highlightedId, isLoading, is
 
   return (
     <Box>
-      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1.5} alignItems={{ sm: 'center' }} sx={{ mb: 2 }}>
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        spacing={1.5}
+        alignItems={{ sm: 'center' }}
+        sx={{ mb: 2 }}
+      >
         <TextField
           size="small"
           fullWidth
@@ -138,7 +174,11 @@ export function AssignmentGrid({ items, selectedId, highlightedId, isLoading, is
           <TableHead>
             <TableRow>
               {COLUMNS.map((c) => (
-                <TableCell key={c.key} sortDirection={orderBy === c.key ? order : false} sx={{ fontWeight: 700 }}>
+                <TableCell
+                  key={c.key}
+                  sortDirection={orderBy === c.key ? order : false}
+                  sx={{ fontWeight: 700 }}
+                >
                   <TableSortLabel
                     active={orderBy === c.key}
                     direction={orderBy === c.key ? order : 'asc'}
@@ -199,9 +239,15 @@ export function AssignmentGrid({ items, selectedId, highlightedId, isLoading, is
                       cursor: disabled ? 'not-allowed' : 'pointer',
                       bgcolor: disabled ? theme.palette.action.disabledBackground : undefined,
                       '& td': { color: disabled ? theme.palette.text.disabled : undefined },
-                      '&:focus-visible': { outline: '2px solid', outlineColor: 'primary.main', outlineOffset: -2 },
+                      '&:focus-visible': {
+                        outline: '2px solid',
+                        outlineColor: 'primary.main',
+                        outlineOffset: -2,
+                      },
                       ...(row.id === highlightedId && {
-                        '@media (prefers-reduced-motion: no-preference)': { animation: `${flash} 2.2s ease-out` },
+                        '@media (prefers-reduced-motion: no-preference)': {
+                          animation: `${flash} 2.2s ease-out`,
+                        },
                       }),
                     })}
                   >
@@ -239,7 +285,11 @@ export function AssignmentGrid({ items, selectedId, highlightedId, isLoading, is
         labelRowsPerPage={t('rowsPerPage')}
         labelDisplayedRows={({ from, to, count }) => t('displayedRows', { from, to, count })}
       />
-      <Box role="status" aria-live="polite" sx={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)' }}>
+      <Box
+        role="status"
+        aria-live="polite"
+        sx={{ position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)' }}
+      >
         {!isLoading && t('resultCount', { n: visible.length })}
       </Box>
     </Box>

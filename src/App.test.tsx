@@ -128,7 +128,9 @@ describe('Assignment Manager — UX extras', () => {
     expect(field(/^code/i)).toHaveValue('AB123');
 
     await user.click(row('EF789'));
-    await user.click(within(await screen.findByRole('dialog')).getByRole('button', { name: /discard changes/i }));
+    await user.click(
+      within(await screen.findByRole('dialog')).getByRole('button', { name: /discard changes/i }),
+    );
     await waitFor(() => expect(field(/^code/i)).toHaveValue('EF789'));
   });
 

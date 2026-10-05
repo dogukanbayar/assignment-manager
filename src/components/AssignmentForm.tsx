@@ -23,7 +23,12 @@ export function AssignmentForm({ workspace }: { workspace: AssignmentWorkspace }
   const dateValue = useWatch({ control, name: 'assignDate' });
 
   return (
-    <Box component="form" onSubmit={submit} noValidate aria-label={isEditMode ? t('editRecord') : t('newRecord')}>
+    <Box
+      component="form"
+      onSubmit={submit}
+      noValidate
+      aria-label={isEditMode ? t('editRecord') : t('newRecord')}
+    >
       <Box sx={{ minHeight: 48, mb: 1 }}>
         {isEditMode && selected ? (
           <Alert icon={<EditNoteIcon fontSize="inherit" />} severity="info" variant="outlined" sx={{ py: 0 }}>
@@ -75,7 +80,9 @@ export function AssignmentForm({ workspace }: { workspace: AssignmentWorkspace }
             <DatePickerButton
               value={dateValue ?? ''}
               label={t('openCalendar')}
-              onPick={(v) => setValue('assignDate', v, { shouldDirty: true, shouldTouch: true, shouldValidate: true })}
+              onPick={(v) =>
+                setValue('assignDate', v, { shouldDirty: true, shouldTouch: true, shouldValidate: true })
+              }
             />
           }
         />

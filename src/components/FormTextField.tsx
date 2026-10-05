@@ -1,5 +1,11 @@
 import type { ReactNode } from 'react';
-import { Controller, type Control, type FieldPath, type FieldValues, type RegisterOptions } from 'react-hook-form';
+import {
+  Controller,
+  type Control,
+  type FieldPath,
+  type FieldValues,
+  type RegisterOptions,
+} from 'react-hook-form';
 import { InputAdornment, TextField, Tooltip } from '@mui/material';
 
 export interface FormTextFieldProps<T extends FieldValues> {
@@ -97,8 +103,12 @@ export function FormTextField<T extends FieldValues>({
               slotProps={{
                 htmlInput: { maxLength, inputMode, pattern: pattern?.source },
                 input: {
-                  startAdornment: startIcon ? <InputAdornment position="start">{startIcon}</InputAdornment> : undefined,
-                  endAdornment: endAdornment ? <InputAdornment position="end">{endAdornment}</InputAdornment> : undefined,
+                  startAdornment: startIcon ? (
+                    <InputAdornment position="start">{startIcon}</InputAdornment>
+                  ) : undefined,
+                  endAdornment: endAdornment ? (
+                    <InputAdornment position="end">{endAdornment}</InputAdornment>
+                  ) : undefined,
                 },
               }}
             />

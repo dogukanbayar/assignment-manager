@@ -23,7 +23,10 @@ export class ErrorBoundary extends Component<Props, { hasError: boolean }> {
   render() {
     if (!this.state.hasError) return this.props.children;
     return (
-      <Box role="alert" sx={{ minHeight: '100vh', display: 'grid', placeItems: 'center', textAlign: 'center', p: 3 }}>
+      <Box
+        role="alert"
+        sx={{ minHeight: '100vh', display: 'grid', placeItems: 'center', textAlign: 'center', p: 3 }}
+      >
         <Box>
           <ErrorOutlineIcon color="error" sx={{ fontSize: 48 }} />
           <Typography variant="h6" sx={{ my: 1 }}>

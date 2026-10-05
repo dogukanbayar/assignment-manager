@@ -10,7 +10,15 @@ interface Props {
   onCancel: () => void;
 }
 
-export function ConfirmDialog({ open, title, description, confirmLabel, cancelLabel, onConfirm, onCancel }: Props) {
+export function ConfirmDialog({
+  open,
+  title,
+  description,
+  confirmLabel,
+  cancelLabel,
+  onConfirm,
+  onCancel,
+}: Props) {
   return (
     <Dialog open={open} onClose={onCancel} aria-labelledby="confirm-title" aria-describedby="confirm-desc">
       <DialogTitle id="confirm-title">{title}</DialogTitle>

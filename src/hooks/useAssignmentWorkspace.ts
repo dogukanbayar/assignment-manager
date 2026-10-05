@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, type RefObject } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
@@ -25,7 +25,7 @@ export interface Notification {
 const HIGHLIGHT_MS = 2500;
 
 /** Sayfanın tüm iş mantığı: form, seçim, kirli-form koruması, kısayollar, geri alma. */
-export function useAssignmentWorkspace() {
+export function useAssignmentWorkspace(formPanelRef: RefObject<HTMLElement | null>) {
   const { t } = useI18n();
   const dispatch = useAppDispatch();
 
@@ -50,7 +50,6 @@ export function useAssignmentWorkspace() {
 
   const [notification, setNotification] = useState<Notification | null>(null);
   const [pendingAction, setPendingAction] = useState<{ run: () => void } | null>(null);
-  const formPanelRef = useRef<HTMLDivElement>(null);
 
   const notify = useCallback((n: Notification) => setNotification(n), []);
   const closeNotification = useCallback(() => setNotification(null), []);
@@ -85,7 +84,7 @@ export function useAssignmentWorkspace() {
         formPanelRef.current?.scrollIntoView?.({ behavior: 'smooth', block: 'start' });
       }
     },
-    [dispatch, reset],
+    [dispatch, reset, formPanelRef],
   );
 
   const selectRow = useCallback(
@@ -185,7 +184,17 @@ export function useAssignmentWorkspace() {
         handleError(e);
       }
     },
-    [selected, updateAssignment, addAssignment, deleteAssignment, afterSuccess, notify, t, dispatch, handleError],
+    [
+      selected,
+      updateAssignment,
+      addAssignment,
+      deleteAssignment,
+      afterSuccess,
+      notify,
+      t,
+      dispatch,
+      handleError,
+    ],
   );
 
   const submit = handleSubmit(onValid);
@@ -228,7 +237,6 @@ export function useAssignmentWorkspace() {
     submit,
     clean,
     selectRow,
-    formPanelRef,
     notification,
     closeNotification,
     confirmOpen: pendingAction !== null,

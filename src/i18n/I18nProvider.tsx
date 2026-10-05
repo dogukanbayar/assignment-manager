@@ -23,7 +23,13 @@ const detectLanguage = (): Language => {
   return navigator.language?.toLowerCase().startsWith('tr') ? 'tr' : 'en';
 };
 
-export function I18nProvider({ children, initialLanguage }: { children: ReactNode; initialLanguage?: Language }) {
+export function I18nProvider({
+  children,
+  initialLanguage,
+}: {
+  children: ReactNode;
+  initialLanguage?: Language;
+}) {
   const [language, setLanguageState] = useState<Language>(initialLanguage ?? detectLanguage);
 
   useEffect(() => {
