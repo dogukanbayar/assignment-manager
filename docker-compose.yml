@@ -1,0 +1,7 @@
+services:
+  web:
+    build: .
+    image: assignment-manager:1.0.0
+    ports:
+      - "8080:80"
+    restart: unless-stopped
