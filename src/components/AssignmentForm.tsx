@@ -65,9 +65,13 @@ export function AssignmentForm({ onNotify }: Props) {
     clean();
   };
 
-  const isCodeUnique = (value: string) =>
-    !items.some((i) => i.code.toUpperCase() === value.trim().toUpperCase() && i.id !== selectedId) ||
-    'Bu kod zaten kayıtlı';
+  const isCodeUnique = (raw: unknown) => {
+    const value = String(raw);
+    return (
+      !items.some((i) => i.code.toUpperCase() === value.trim().toUpperCase() && i.id !== selectedId) ||
+      'Bu kod zaten kayıtlı'
+    );
+  };
 
   return (
     <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate aria-label="Kayıt formu">
