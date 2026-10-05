@@ -20,15 +20,15 @@ Kullanıcının kayıt girebildiği, listeleyebildiği ve **güncellenebilir** k
 
 ## Teknolojiler ve sürümler
 
-| Teknoloji | Sürüm |
-|---|---|
-| React / React DOM | 19.x |
-| TypeScript | 7.x |
+| Teknoloji                   | Sürüm     |
+| --------------------------- | --------- |
+| React / React DOM           | 19.x      |
+| TypeScript                  | 7.x       |
 | Redux Toolkit / React-Redux | 2.x / 9.x |
-| React Hook Form | 7.x |
-| MUI (Material UI) + Icons | 7.x |
-| Vite | 8.x |
-| Node.js (önerilen) | 22 LTS |
+| React Hook Form             | 7.x       |
+| MUI (Material UI) + Icons   | 7.x       |
+| Vite                        | 8.x       |
+| Node.js (önerilen)          | 22 LTS    |
 
 ## Kurulum ve çalıştırma
 
