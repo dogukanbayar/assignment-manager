@@ -1,7 +1,29 @@
+/// <reference types="vitest/config" />
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
   server: { host: true, port: 5173 },
+  build: {
+    rolldownOptions: {
+      output: {
+        advancedChunks: {
+          groups: [
+            { name: 'mui', test: /node_modules[\\/](@mui|@emotion)[\\/]/ },
+            { name: 'react', test: /node_modules[\\/](react|react-dom|scheduler)[\\/]/ },
+            { name: 'state', test: /node_modules[\\/](@reduxjs|react-redux|redux|immer|reselect|react-hook-form|zod|@hookform)[\\/]/ },
+          ],
+        },
+      },
+    },
+  },
+  test: {
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: ['./src/test/setup.ts'],
+    css: false,
+    testTimeout: 20000,
+    env: { VITE_API_LATENCY: '0' },
+  },
 });
