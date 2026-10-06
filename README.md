@@ -1,113 +1,201 @@
+pbpaste > README.md<div align="center">
+
 # Assignment Manager
 
-Kullanıcının kayıt girebildiği, listeleyebildiği ve **güncellenebilir** kayıtları düzenleyebildiği tek sayfalık React uygulaması (mülakat test case'i).
+**A single-page React + TypeScript CRUD app, built like a product instead of a form.**
 
-![CI](https://img.shields.io/badge/CI-GitHub%20Actions-2088FF) ![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6) ![Tests](https://img.shields.io/badge/tests-26%20passing-brightgreen)
+![CI](https://github.com/westblood585-sketch/assignment-manager/actions/workflows/ci.yml/badge.svg)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-6-3178C6?logo=typescript&logoColor=white)
+![Tests](https://img.shields.io/badge/tests-26%20passing-brightgreen)
+![Node](https://img.shields.io/badge/node-%E2%89%A522.12-339933?logo=node.js&logoColor=white)
 
-## Şartname karşılığı
+</div>
 
-| #     | Beklenti                                                                               | Durum |
-| ----- | -------------------------------------------------------------------------------------- | ----- |
-| 1a    | **Code**: 2 harf + 3 rakam, max 5, zorunlu, hover'da pattern ipucu                     | ✅    |
-| 1b    | **Name**: max 12 karakter, zorunlu                                                     | ✅    |
-| 1c    | **Assign Date**: `DD/MM/YYYY`, zorunlu, hover'da pattern ipucu                         | ✅    |
-| 1d    | **Is Updatable?** checkbox                                                             | ✅    |
-| 2     | **Save/Update** ve **Clean** butonları (MUI ikonlu)                                    | ✅    |
-| 3     | Datagrid                                                                               | ✅    |
-| E1    | Save ile grid dolar                                                                    | ✅    |
-| E2    | Satıra tıklayınca input'lar dolar                                                      | ✅    |
-| E3    | `Is Updatable?` seçili değilse satır gri ve tıklanamaz                                 | ✅    |
-| E4    | Güncellenebilir satırda `Save` → `Update`                                              | ✅    |
-| E5    | Update grid'de kaydı günceller                                                         | ✅    |
-| E6    | Clean 4 alanı temizler, buton `Save` olur                                              | ✅    |
-| E7    | Generic input bileşeni (`FormTextField`: name, pattern, tips, disabled, maxLength ...) | ✅    |
-| E8    | Generic buton bileşeni (`ActionButton`: label, action, tips, renk, disabled, ikon ...) | ✅    |
-| E9–10 | UI kütüphanesi + ikonlar, UI/UX kuralları (MUI)                                        | ✅    |
+Enter records, view them in a data grid, and edit the ones marked as updatable. Everything from the original brief is implemented, plus the engineering and UX details that usually separate a demo from a product: undo, a dirty-form guard, keyboard shortcuts, dark mode, TR/EN, a fake API layer with optimistic updates, tests and CI.
 
-## Şartnamenin ötesinde
+## Table of contents
 
-**Mühendislik**
+- [Quick start](#quick-start)
+- [Requirements coverage](#requirements-coverage)
+- [Beyond the brief](#beyond-the-brief)
+- [Keyboard shortcuts](#keyboard-shortcuts)
+- [Architecture](#architecture)
+- [Tech stack](#tech-stack)
+- [Scripts](#scripts)
+- [Testing](#testing)
+- [Quality gates and CI](#quality-gates-and-ci)
+- [Docker](#docker)
+- [Design decisions and trade-offs](#design-decisions-and-trade-offs)
+- [Accessibility](#accessibility)
+- [Known limitations and roadmap](#known-limitations-and-roadmap)
 
-- **Tarih ISO saklanır** (`YYYY-MM-DD`), `DD/MM/YYYY` sadece gösterim/girişte; tek dönüşüm noktası `utils/adapters.ts`. Sıralama bu sayede doğru çalışır.
-- **Zod şeması tek doğruluk kaynağı** (`schema/assignmentSchema.ts`), `zodResolver` ile react-hook-form'a bağlı. Code benzersizliği de şemada.
-- **İş mantığı hook'ta** (`useAssignmentWorkspace`), bileşenler sadece görünüm. Memoize edilmiş `createSelector` seçicileri.
-- **Fake API katmanı**: RTK Query + `fakeBaseQuery`. Gecikme, benzersizlik hatası (409 benzeri), **iyimser güncelleme + otomatik geri alma**, loading/error durumları. Gerçek REST API'ye geçiş için sadece `api/fakeServer.ts` değişir.
-- **Testler** (Vitest + React Testing Library, 26 test): şartname maddelerine birebir eşlenmiş senaryolar + UX ekstraları.
-- **Kalite kapıları**: ESLint 10 (flat config, react-hooks), Prettier, Husky (`pre-commit`: lint-staged, `commit-msg`: commitlint/conventional commits, `pre-push`: typecheck + test), GitHub Actions CI (format, lint, typecheck, test, build, docker build).
-- `ErrorBoundary`, vendor chunk ayrımı (bundle uyarısı yok), Docker'da **root olmayan** nginx + güvenlik başlıkları + read-only compose.
+## Quick start
 
-**UI/UX**
-
-- **Kirli form koruması**: değişiklik varken başka satıra geçilirse "Değişiklikler atılsın mı?" diyaloğu; formda "Kaydedilmemiş değişiklikler" etiketi; sekme kapatırken tarayıcı uyarısı.
-- **Düzenleme modu belirgin**: "AB123 düzenleniyor · Esc ile iptal" bandı. Mobilde satır seçilince forma otomatik kaydırma.
-- **Kısayollar**: `Ctrl/Cmd + S` kaydet, `Esc` iptal. Kayıttan sonra odak `Code` alanına döner.
-- **Geri al (Undo)**: Save, Update ve Clean sonrası snackbar'da.
-- **Gri satır tek başına yeterli değil**: kilit ikonu + hover açıklaması ("Bu kayıt güncellenemez: ...") + `aria-disabled`.
-- **Anlık geri bildirim**: Name karakter sayacı (`8/12`), Code otomatik büyük harf, tarihte otomatik `/` maskesi ve takvim butonu (yazarak da girilebilir).
-- **Satır vurgusu**: kaydedilen/güncellenen satır kısa süre yanar (`prefers-reduced-motion`'a saygılı).
-- **Grid**: kolon sıralama, arama, "sadece güncellenebilirler" filtresi, sayfalama, boş/sonuçsuz durum, skeleton yükleme, `aria-live` sonuç duyurusu, klavyeyle satır seçimi.
-- **Karanlık mod** ve **TR/EN** dil desteği (tercihler kalıcı; ilk açılışta sistem ayarı).
-
-## Teknolojiler ve sürümler
-
-| Teknoloji                                 | Sürüm                                                       |
-| ----------------------------------------- | ----------------------------------------------------------- |
-| React / React DOM                         | 19.x                                                        |
-| TypeScript                                | 6.0.x (typescript-eslint henüz TS 7'yi desteklemediği için) |
-| Redux Toolkit (+ RTK Query) / React-Redux | 2.x / 9.x                                                   |
-| React Hook Form + @hookform/resolvers     | 7.x / 5.x                                                   |
-| Zod                                       | 4.x                                                         |
-| MUI (Material UI) + Icons                 | 7.x                                                         |
-| Vite                                      | 8.x                                                         |
-| Vitest + Testing Library                  | 5.x                                                         |
-| ESLint / Prettier                         | 10.x / 3.x                                                  |
-| Node.js (önerilen)                        | 22 LTS                                                      |
-
-## Kurulum ve çalıştırma
+Requires **Node.js 22.12+** (an `.nvmrc` is included, so `nvm use` picks the right version).
 
 ```bash
 npm install
-npm run dev          # http://localhost:5173
-npm test             # testleri çalıştır
-npm run lint         # ESLint
-npm run typecheck    # TypeScript
-npm run build        # üretim derlemesi
-npm run preview      # derlenmiş uygulamayı önizle
+npm run dev        # http://localhost:5173
 ```
 
-İlk açılışta demo için 3 örnek kayıt (biri güncellenemez) yüklenir. Sıfırlamak için tarayıcıda `localStorage` temizlenebilir.
+On first launch three demo records are loaded (one of them is not updatable) so every state of the grid is visible immediately. To reset, clear the site's `localStorage` in the browser.
 
-### Docker
+## Requirements coverage
+
+| #     | Requirement                                                                                         | Status |
+| ----- | --------------------------------------------------------------------------------------------------- | ------ |
+| 1a    | **Code**: first 2 characters letters, last 3 digits, max length 5, required, pattern tip on hover   | ✅     |
+| 1b    | **Name**: max length 12, required                                                                   | ✅     |
+| 1c    | **Assign Date**: `DD/MM/YYYY`, required, pattern tip on hover                                       | ✅     |
+| 1d    | **Is Updatable?** checkbox                                                                          | ✅     |
+| 2     | **Save/Update** and **Clean** buttons, with icons from the UI library                               | ✅     |
+| 3     | Data grid component                                                                                 | ✅     |
+| E1    | Save populates the grid                                                                             | ✅     |
+| E2    | Clicking a row fills the inputs                                                                     | ✅     |
+| E3    | Rows without "Is Updatable?" are grey and not clickable                                             | ✅     |
+| E4    | Clicking an updatable row turns **Save** into **Update**                                            | ✅     |
+| E5    | **Update** modifies the record in the grid                                                          | ✅     |
+| E6    | **Clean** clears all four inputs and the button reads **Save** again                                | ✅     |
+| E7    | Generic input component (`FormTextField`: name, pattern, tips, disabled, maxLength, transform, ...) | ✅     |
+| E8    | Generic button component (`ActionButton`: label, action, tips, color, disabled, icon, ...)          | ✅     |
+| E9-10 | UI library with icons (MUI) and UI/UX best practices                                                | ✅     |
+
+Delivery: meaningful, incremental conventional commits; this README; Docker and docker-compose; a fake API layer instead of an external service.
+
+## Beyond the brief
+
+**Engineering**
+
+- **ISO dates in the domain.** Dates are stored as `YYYY-MM-DD` and shown as `DD/MM/YYYY`. All conversion happens in one place (`utils/adapters.ts`), and sorting by date is correct.
+- **Zod schema as the single source of validation truth.** `schema/assignmentSchema.ts` drives `react-hook-form` through `zodResolver`, including uniqueness of the code.
+- **Logic in a hook, components stay presentational.** `useAssignmentWorkspace` owns form state, selection, dirty guard, undo and shortcuts. Selectors are memoized with `createSelector`.
+- **Fake API with RTK Query.** Simulated latency, a server-side duplicate-code error, **optimistic updates with automatic rollback**, and loading/error states. Swapping in a real REST API only touches `api/fakeServer.ts`.
+- **26 tests** (Vitest + React Testing Library) mapped to the brief's scenarios plus the UX extras.
+- **Quality gates:** ESLint 10 (flat config), Prettier, Husky, lint-staged, commitlint, GitHub Actions.
+- **Production hygiene:** `ErrorBoundary`, vendor chunk splitting (no bundle-size warning), non-root nginx in Docker with security headers and a read-only compose service.
+
+**UI/UX**
+
+- **Dirty-form guard.** Switching rows with unsaved changes opens a confirmation dialog; the form shows an "Unsaved changes" chip; closing the tab triggers the browser warning.
+- **Clear edit mode.** A banner shows which record is being edited and how to cancel. On mobile the page scrolls to the form when a row is selected, and focus returns to the first field after saving.
+- **Undo** for Save, Update and Clean via the snackbar.
+- **Disabled rows are not conveyed by colour alone.** They also get a lock icon, a hover explanation and `aria-disabled`.
+- **Instant feedback.** Live character counter on Name (`8/12`), automatic upper-casing of Code, automatic `/` mask for the date, plus a calendar picker (typing still works).
+- **Row highlight** after save/update, respecting `prefers-reduced-motion`.
+- **Grid:** column sorting, search, "updatable only" filter, pagination, empty and no-result states, skeleton loading, retry on error, `aria-live` result announcements.
+- **Dark mode** and **TR/EN** language switch. Preferences persist; the first visit follows the system setting.
+
+## Keyboard shortcuts
+
+| Key               | Action                                                      |
+| ----------------- | ----------------------------------------------------------- |
+| `Ctrl/Cmd + S`    | Save or update the current record                           |
+| `Esc`             | Cancel editing (asks for confirmation if there are changes) |
+| `Tab`             | Move between fields and updatable rows                      |
+| `Enter` / `Space` | Select the focused row for editing                          |
+
+## Architecture
+
+```mermaid
+flowchart LR
+  UI["Components<br/>AssignmentForm / AssignmentGrid"] --> Hook["useAssignmentWorkspace<br/>(form, selection, undo, shortcuts)"]
+  Hook --> RHF["React Hook Form<br/>+ Zod schema"]
+  Hook --> Ui["Redux ui slice<br/>selectedId, highlightedId"]
+  Hook --> RTKQ["RTK Query<br/>assignmentsApi"]
+  RTKQ --> Server["fakeServer<br/>latency, validation, localStorage"]
+```
+
+```
+src/
+  api/          fakeServer (simulated backend), assignmentsApi (RTK Query)
+  components/   FormTextField, ActionButton, AssignmentForm, AssignmentGrid, ConfirmDialog, ...
+  hooks/        useAssignmentWorkspace
+  i18n/         TR/EN translations and provider
+  schema/       Zod validation schema
+  store/        Redux store, ui slice, selectors
+  theme/        MUI theme and dark-mode provider
+  utils/        date helpers, form/domain adapters, validation constants
+  test/         test setup and helpers
+```
+
+Each kind of state lives where it fits best: **server state** in RTK Query, **UI state** (selected and highlighted row) in a small Redux slice, **form state** in React Hook Form.
+
+## Tech stack
+
+| Technology                                  | Version                                             |
+| ------------------------------------------- | --------------------------------------------------- |
+| React / React DOM                           | 19.x                                                |
+| TypeScript                                  | 6.0.x (typescript-eslint does not support TS 7 yet) |
+| Redux Toolkit (with RTK Query), React-Redux | 2.x, 9.x                                            |
+| React Hook Form, @hookform/resolvers        | 7.x, 5.x                                            |
+| Zod                                         | 4.x                                                 |
+| MUI (Material UI) and MUI Icons             | 7.x                                                 |
+| Vite                                        | 8.x                                                 |
+| Vitest, Testing Library                     | 5.x                                                 |
+| ESLint, Prettier                            | 10.x, 3.x                                           |
+| Node.js                                     | 22 LTS (`>=22.12`)                                  |
+
+## Scripts
+
+| Command                | Description                         |
+| ---------------------- | ----------------------------------- |
+| `npm run dev`          | Start the dev server                |
+| `npm run build`        | Type-check and build for production |
+| `npm run preview`      | Preview the production build        |
+| `npm test`             | Run the test suite once             |
+| `npm run test:watch`   | Run tests in watch mode             |
+| `npm run lint`         | ESLint                              |
+| `npm run typecheck`    | TypeScript, no emit                 |
+| `npm run format`       | Format with Prettier                |
+| `npm run format:check` | Check formatting                    |
+
+## Testing
+
+26 tests across three layers:
+
+- **Utilities** (`date.test.ts`): ISO/display conversion, real-calendar validation, input mask.
+- **Schema** (`assignmentSchema.test.ts`): code pattern, name length, impossible dates, duplicate codes (editing a record may keep its own code).
+- **Integration** (`App.test.tsx`): user-level flows through the real UI, store and fake API.
+  - Brief scenarios: constraints, hover tips, validation, Save fills the grid, disabled rows, row click fills inputs, Save becomes Update, Update changes the row, Clean resets.
+  - UX extras: duplicate rejection, dirty-form dialog, `Esc`, `Ctrl+S`, undo of save and update, search and filter.
+
+## Quality gates and CI
+
+| Stage               | What runs                                                               |
+| ------------------- | ----------------------------------------------------------------------- |
+| `pre-commit`        | lint-staged: ESLint and Prettier on staged files                        |
+| `commit-msg`        | commitlint: Conventional Commits (`feat:`, `fix:`, `docs:`, ...)        |
+| `pre-push`          | type-check and tests                                                    |
+| GitHub Actions (CI) | format check, lint, type-check, tests, build, then a Docker image build |
+
+## Docker
 
 ```bash
 docker compose up --build   # http://localhost:8080
 ```
 
-## Proje yapısı
+Multi-stage build (Node 22 builder, then `nginx-unprivileged`). The container runs as a non-root user, serves on port 8080 with basic security headers, and the compose service is read-only with `no-new-privileges`.
 
-```
-src/
-  api/          fakeServer (gecikmeli sahte backend), assignmentsApi (RTK Query)
-  components/   FormTextField, ActionButton, AssignmentForm, AssignmentGrid, ConfirmDialog, ...
-  hooks/        useAssignmentWorkspace (form + seçim + undo + kısayollar)
-  i18n/         TR/EN çeviriler ve provider
-  schema/       Zod doğrulama şeması
-  store/        Redux store, ui slice, selector'lar
-  theme/        MUI teması + karanlık mod provider'ı
-  utils/        tarih yardımcıları, adapter'lar, doğrulama sabitleri
-  test/         test kurulumu ve yardımcıları
-```
+## Design decisions and trade-offs
 
-## Tasarım kararları
+- **ISO dates, display format at the edge.** Storing `DD/MM/YYYY` strings would make sorting and filtering wrong. The form model and domain model are therefore different types, converted in one adapter.
+- **One validation source.** Rules live in the Zod schema. `FormTextField` still accepts `pattern`, `required` and `maxLength` as props (as the brief asks) and applies them as RHF rules when used without a resolver and as HTML attributes always; with a resolver the schema is authoritative.
+- **Imperative selection-to-form sync.** Selecting a row calls `reset()` directly instead of syncing through effects. This keeps the dirty guard and undo predictable.
+- **Fake API behind RTK Query.** Loading, error and optimistic-update behaviour are exercised for real, and migrating to a REST backend means replacing `fakeServer` with `fetchBaseQuery`.
+- **Server enforces uniqueness too.** The client check can race; a `DUPLICATE_CODE` error from the server is mapped back onto the Code field.
+- **TypeScript 6.0, not 7.** Pinned because `typescript-eslint` does not support TS 7 yet; revisit when it does.
 
-- **Sunucu durumu RTK Query'de, arayüz durumu (seçili/vurgulanan satır) `ui` slice'ında**, form durumu react-hook-form'da. Her biri kendi işine uygun aracın elinde.
-- **Seçim → form senkronu imperatif** (`reset`): effect zincirleri yerine açık çağrı, böylece kirli-form koruması ve Undo öngörülebilir kalır.
-- **Resolver varken** `FormTextField` içindeki RHF kuralları devre dışı kalır (yalnızca resolver'sız kullanımda geçerli); kurallar Zod şemasında toplanır. `pattern` yine HTML özniteliği olarak yansır.
-- **Zod `superRefine`** ile benzersizlik; sunucu da aynı kuralı uygular (yarış durumlarında `DUPLICATE_CODE` hatası forma yansıtılır).
+## Accessibility
 
-## Gelecek iyileştirmeler
+- Every input has a visible label, helper text and an error message tied to the field.
+- Grid rows are keyboard reachable; disabled rows are removed from the tab order and carry `aria-disabled`.
+- Status is never colour-only: lock icon plus text for non-updatable rows.
+- Results and save/undo messages are announced through live regions.
+- Animations respect `prefers-reduced-motion`; dark mode follows the system by default.
 
-- Gerçek REST API'ye geçiş (`fakeServer` yerine `fetchBaseQuery`) ve MSW ile entegrasyon testleri
-- Silme işlemi arayüzü (API'de `deleteAssignment` hazır, şu an yalnızca Undo kullanıyor)
-- Playwright ile uçtan uca testler, Storybook ile bileşen kataloğu
-- Sanallaştırılmış (virtualized) grid ve sunucu taraflı sayfalama
+## Known limitations and roadmap
+
+- Record ids use `crypto.randomUUID()`, which browsers only expose on `localhost` and HTTPS. Opening the dev server over a plain-HTTP LAN address would break saving.
+- There is no delete UI yet; `deleteAssignment` exists in the API layer and is currently used only by undo.
+- Next steps: a real REST backend with MSW-based integration tests, Playwright end-to-end tests, Storybook for the components, virtualized grid with server-side pagination.
